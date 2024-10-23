@@ -162,7 +162,8 @@ void start_uart_recv(void)
 {
     circular_queue_init(&rx_queue, (void*)rx_buffer, RX_BUFFER_SIZE, sizeof(uint8_t));
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
-    HAL_UART_Receive_DMA(&huart1, rx_tmp_buffer, RX_TEMP_BUFFER_SIZE);
+    // HAL_UART_Receive_DMA(&huart1, rx_tmp_buffer, RX_TEMP_BUFFER_SIZE);
+    HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rx_tmp_buffer, RX_TEMP_BUFFER_SIZE);
 }
 
 void uart_send(void)
@@ -189,6 +190,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 
         RxBufferProcessed = 1;
         memcpy((void*)rx_tmp_buffer, "\0", RX_TEMP_BUFFER_SIZE); // clear buffer
+        HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rx_tmp_buffer, RX_TEMP_BUFFER_SIZE);
     }
 }
 
